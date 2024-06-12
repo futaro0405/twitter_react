@@ -1,12 +1,15 @@
 import './App.css';
 import { createContext, useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate,} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 
+// containers
 import { SignUp } from "./containers/pages/SignUp";
 import { SignIn } from "./containers/pages/SignIn";
-import Layout from "./containers/layouts/Layout";
-import { getCurrentUser } from './lib/api/auth';
+import { Layout } from "./containers/layouts/Layout";
 import { Home } from './containers/pages/Home';
+
+// api
+import { getCurrentUser } from './lib/api/auth';
 
 export const AuthContext = createContext();
 
@@ -37,30 +40,16 @@ function App() {
     handleGetCurrentUser()
   }, [setCurrentUser])
 
-  // ユーザーが認証済みかどうかでルーティングを決定
-  // 未認証だった場合は「/signin」ページに促す
-  const Private = ({children}) => {
-    if(!loading) {
-      if(isSignIn) {
-        return children
-      } else {
-        return <Navigate to="/signin" />
-      }
-    }
-  }
-
   return (
     <Router>
       <AuthContext.Provider value={{ loading, setLoading, isSignIn, setIsSignIn, currentUser, setCurrentUser}}>
-        <Layout>
-          <Routes>
-            <Route exact path="/signup" element={<SignUp />} />
-            <Route exact path="/signin" element={<SignIn />} />
-            <Private>
-              <Route exact path="/" element={<Home />} />
-            </Private>
-          </Routes>
-        </Layout>
+        <Routes>
+          <Route exact path="/signup" element={<SignUp />} />
+          <Route exact path="/signin" element={<SignIn />} />
+          <Route path="/" element={<Layout />}>
+            <Route path="/home" element={<Home />} />
+          </Route>
+        </Routes>
       </AuthContext.Provider>
     </Router>
   )

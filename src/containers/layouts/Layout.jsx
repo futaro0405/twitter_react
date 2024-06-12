@@ -1,25 +1,37 @@
-import { Container, Grid } from "@mui/material"
+import { Outlet } from "react-router-dom";
 
-import Header from "./Header"
+// mui
+import { Container, Grid, styled } from "@mui/material";
 
-// 全てのページで共通となるレイアウト
-const Layout = ({ children }) => {
+// containers
+import { Header } from "./Header";
+import { Footer } from "./Footer";
+
+// styled
+const SContainer = styled(Container)(({theme}) => ({
+  marginTop: theme.spacing(4)
+}));
+
+export const Layout = () => {
   return (
     <>
       <header>
         <Header />
       </header>
+
       <main>
-        <Container maxWidth="lg">
+        <SContainer maxWidth="lg">
           <Grid container justify="center">
             <Grid item>
-              {children}
-            </Grid>   
+              <Outlet />
+            </Grid>
           </Grid>
-        </Container>
+        </SContainer>
       </main>
-    </>
-  )
-}
 
-export default Layout
+      <footer>
+        <Footer />
+      </footer>
+    </>
+  );
+};

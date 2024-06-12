@@ -1,20 +1,34 @@
-import React, { useContext } from "react"
-import { useNavigate, Link } from "react-router-dom"
 import Cookies from "js-cookie"
+import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-import AppBar from "@mui/material/AppBar"
-import Toolbar from "@mui/material/Toolbar"
-import Typography from "@mui/material/Typography"
-import Button from "@mui/material/Button"
-import IconButton from "@mui/material/IconButton"
-import MenuIcon from "@mui/icons-material/Menu"
+// mui
+import { AppBar, Button, IconButton, Toolbar, Typography} from "@mui/material";
+import { styled } from '@mui/material/styles';
+import MenuIcon from '@mui/icons-material/Menu';
 
-import { signOut } from "../../lib/api/auth"
-import { AuthContext } from "../../App"
+// api
+import { signOut } from "../../lib/api/auth";
 
-const Header = () => {
-  const { loading, isSignedIn, setIsSignedIn } = useContext(AuthContext)
-  const navigate = useNavigate()
+import { AuthContext } from "../../App";
+
+const SLinkBtn = styled(Button)(() => ({
+  textTransform: "none"
+}));
+
+const SIconBtn = styled(IconButton)(({theme}) => ({
+  marginRight: theme.spacing(2),
+}));
+
+const STitle = styled(Typography)(() => ({
+  flexGrow: 1,
+  textDecoration: "none",
+  color: "inherit"
+}));
+
+export const Header = () => {
+  const {loading, isSignIn, setIsSignIn } = useContext(AuthContext);
+  const navigation = useNavigate()
 
   const handleSignOut = async () => {
     try {
@@ -26,8 +40,8 @@ const Header = () => {
         Cookies.remove("_client")
         Cookies.remove("_uid")
 
-        setIsSignedIn(false)
-        navigate("/signin")
+        setIsSignIn(false)
+        navigation("/signin")
 
         console.log("Succeeded in sign out")
       } else {
@@ -42,32 +56,32 @@ const Header = () => {
     // 認証完了後はサインアウト用のボタンを表示
     // 未認証時は認証用のボタンを表示
     if (!loading) {
-      if (isSignedIn) {
+      if (isSignIn) {
         return (
-          <Button
+          <SLinkBtn
             color="inherit"
             onClick={handleSignOut}
           >
             Sign out
-          </Button>
+          </SLinkBtn>
         )
       } else {
         return (
           <>
-            <Button
+            <SLinkBtn
               component={Link}
               to="/signin"
               color="inherit"
             >
               Sign in
-            </Button>
-            <Button
+            </SLinkBtn>
+            <SLinkBtn
               component={Link}
               to="/signup"
               color="inherit"
             >
               Sign Up
-            </Button>
+            </SLinkBtn>
           </>
         )
       }
@@ -80,24 +94,22 @@ const Header = () => {
     <>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
+          <SIconBtn
             edge="start"
             color="inherit"
           >
             <MenuIcon />
-          </IconButton>
-          <Typography
+          </SIconBtn>
+          <STitle
             component={Link}
             to="/"
             variant="h6"
           >
             Sample
-          </Typography>
+          </STitle>
           <AuthButtons />
         </Toolbar>
       </AppBar>
     </>
-  )
-}
-
-export default Header
+  );
+};

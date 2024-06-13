@@ -1,7 +1,7 @@
 import Cookies from "js-cookie"
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { styled, Card, CardHeader, Link, Box, Button, CardContent, TextField, Typography } from "@mui/material";
+import { styled, Card, CardHeader, Link, Button, CardContent, TextField, Typography, Box } from "@mui/material";
 
 import { AuthContext } from "../../App";
 import { signIn } from "../../lib/api/auth";
@@ -42,13 +42,10 @@ export const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
     const params = { email, password }
-
     try {
       const res = await signIn(params)
       console.log(res)
-
       if(res.status === 200) {
         // ログインに成功した場合はCookieに各値を格納
         Cookies.set("_access_token", res.headers["access-token"])
@@ -57,9 +54,7 @@ export const SignIn = () => {
 
         setIsSignIn(true)
         setCurrentUser(res.data.data)
-
         navigation("/")
-
         console.log("Signed in successfully!")
       } else {
         setAlertMessageOpen(true)
@@ -102,7 +97,7 @@ export const SignIn = () => {
               variant="contained"
               size="large"
               fullWidth
-              color="default"
+              color="inherit"
               disabled={!email || !password ? true : false} // 空欄があった場合はボタンを押せないように
               onClick={handleSubmit}
             >

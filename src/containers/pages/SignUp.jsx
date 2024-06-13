@@ -123,7 +123,7 @@ export const SignUp = () => {
               variant="contained"
               size="large"
               fullWidth
-              color="default"
+              color="inherit"
               disabled={!name || !email || !password || !passwordConfirmation ? true : false}
               onClick={handleSubmit}
             >

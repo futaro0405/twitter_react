@@ -5,6 +5,7 @@ import { styled, Card, CardHeader, Link, Box, Button, CardContent, TextField, Ty
 
 import { AuthContext } from "../../App";
 import { signIn } from "../../lib/api/auth";
+import {AlertMessage} from "../utils/AlertMessage";
 
 const SCard = styled(Card)(({theme}) => ({
   padding: theme.spacing(2),
@@ -108,11 +109,8 @@ export const SignIn = () => {
               Submit
             </SSubmitBtn>
             <SBox textAlign="center">
-              <Typography variant="body2">
-                Don't have an account? &nbsp;
-                <SLink to="/signup">
-                  Sign Up now!
-                </SLink>
+              <Typography variant="body2">Don`t have an account?
+                <SLink to="/signup">Sign Up now!</SLink>
               </Typography>
             </SBox>
           </CardContent>
@@ -121,8 +119,8 @@ export const SignIn = () => {
       <AlertMessage // エラーが発生した場合はアラートを表示
         open={alertMessageOpen}
         setOpen={setAlertMessageOpen}
-        severity="error"
-        message="Invalid emai or password"
+        severity={"error"}
+        message={"Invalid emai or password"}
       />
     </>
   )

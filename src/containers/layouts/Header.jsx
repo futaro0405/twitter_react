@@ -1,30 +1,17 @@
 import Cookies from "js-cookie"
 import { useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // mui
-import { AppBar, Button, IconButton, Toolbar, Typography} from "@mui/material";
-import { styled } from '@mui/material/styles';
-import MenuIcon from '@mui/icons-material/Menu';
+import { AppBar, Toolbar} from "@mui/material";
+
+// components
+import {HeaderButton as SButton} from "../../components/button/HeaderButton";
+import {HeaderTitle as STitle} from "../../components/typograpy/HeaderTitle";
 
 // api
 import { signOut } from "../../lib/api/auth";
-
 import { AuthContext } from "../../App";
-
-const SLinkBtn = styled(Button)(() => ({
-  textTransform: "none"
-}));
-
-const SIconBtn = styled(IconButton)(({theme}) => ({
-  marginRight: theme.spacing(2),
-}));
-
-const STitle = styled(Typography)(() => ({
-  flexGrow: 1,
-  textDecoration: "none",
-  color: "inherit"
-}));
 
 export const Header = () => {
   const {loading, isSignIn, setIsSignIn } = useContext(AuthContext);
@@ -33,7 +20,6 @@ export const Header = () => {
   const handleSignOut = async () => {
     try {
       const res = await signOut()
-
       if (res.data.success === true) {
         // サインアウト時には各Cookieを削除
         Cookies.remove("_access_token")
@@ -58,30 +44,13 @@ export const Header = () => {
     if (!loading) {
       if (isSignIn) {
         return (
-          <SLinkBtn
-            color="inherit"
-            onClick={handleSignOut}
-          >
-            Sign out
-          </SLinkBtn>
+          <SButton onClick={handleSignOut}>Sign out</SButton>
         )
       } else {
         return (
           <>
-            <SLinkBtn
-              component={Link}
-              to="/signin"
-              color="inherit"
-            >
-              Sign in
-            </SLinkBtn>
-            <SLinkBtn
-              component={Link}
-              to="/signup"
-              color="inherit"
-            >
-              Sign Up
-            </SLinkBtn>
+            <SButton to="/signin">Sign in</SButton>
+            <SButton to="/signup">Sign Up</SButton>
           </>
         )
       }
@@ -94,19 +63,7 @@ export const Header = () => {
     <>
       <AppBar position="static">
         <Toolbar>
-          <SIconBtn
-            edge="start"
-            color="inherit"
-          >
-            <MenuIcon />
-          </SIconBtn>
-          <STitle
-            component={Link}
-            to="/"
-            variant="h6"
-          >
-            Sample
-          </STitle>
+          <STitle to="/">Sample</STitle>
           <AuthButtons />
         </Toolbar>
       </AppBar>

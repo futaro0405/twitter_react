@@ -1,6 +1,7 @@
 import './App.css';
 import { createContext, useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import { RecoilRoot } from "recoil";
 
 // containers
 import { SignUp } from "./containers/pages/SignUp";
@@ -41,17 +42,19 @@ function App() {
   }, [setCurrentUser])
 
   return (
-    <Router>
-      <AuthContext.Provider value={{ loading, setLoading, isSignIn, setIsSignIn, currentUser, setCurrentUser}}>
-        <Routes>
-          <Route exact path="/signup" element={<SignUp />} />
-          <Route exact path="/signin" element={<SignIn />} />
-          <Route path="/" element={<Layout />}>
-            <Route path="/home" element={<Home />} />
-          </Route>
-        </Routes>
-      </AuthContext.Provider>
-    </Router>
+    <RecoilRoot>
+      <Router>
+        <AuthContext.Provider value={{ loading, setLoading, isSignIn, setIsSignIn, currentUser, setCurrentUser}}>
+          <Routes>
+            <Route exact path="/signup" element={<SignUp />} />
+            <Route exact path="/signin" element={<SignIn />} />
+            <Route path="/" element={<Layout />}>
+              <Route path="/home" element={<Home />} />
+            </Route>
+          </Routes>
+        </AuthContext.Provider>
+      </Router>
+    </RecoilRoot>
   )
 }
 

@@ -12,9 +12,19 @@ import { Home } from './containers/pages/Home';
 // api
 import { getCurrentUser } from './lib/api/auth';
 
+// mui
+import { createTheme, CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
+
 export const AuthContext = createContext();
 
 function App() {
+  const isDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
+  const theme = createTheme({
+    palette: {
+      mode: isDarkMode ? 'dark': 'light'
+    }
+  })
+
   const [loading, setLoading] = useState(true);
   const [isSignIn, setIsSignIn] = useState(false);
   const [currentUser, setCurrentUser] = useState();
@@ -43,17 +53,21 @@ function App() {
 
   return (
     <RecoilRoot>
-      <Router>
-        <AuthContext.Provider value={{ loading, setLoading, isSignIn, setIsSignIn, currentUser, setCurrentUser}}>
-          <Routes>
-            <Route exact path="/signup" element={<SignUp />} />
-            <Route exact path="/signin" element={<SignIn />} />
-            <Route path="/" element={<Layout />}>
-              <Route path="/home" element={<Home />} />
-            </Route>
-          </Routes>
-        </AuthContext.Provider>
-      </Router>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+
+        <Router>
+          <AuthContext.Provider value={{ loading, setLoading, isSignIn, setIsSignIn, currentUser, setCurrentUser}}>
+            <Routes>
+              <Route exact path="/signup" element={<SignUp />} />
+              <Route exact path="/signin" element={<SignIn />} />
+              <Route path="/" element={<Layout />}>
+                <Route path="/home" element={<Home />} />
+              </Route>
+            </Routes>
+          </AuthContext.Provider>
+        </Router>
+      </ThemeProvider>
     </RecoilRoot>
   )
 }

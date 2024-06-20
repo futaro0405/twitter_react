@@ -1,36 +1,38 @@
-import { useState, useContext } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Cookies from "js-cookie"
 
 import { Button, Card, CardContent, CardHeader, TextField, styled } from "@mui/material"
-import { AuthContext } from "../../App";
 import { signUp } from "../../lib/api/auth";
 import {AlertMessage} from "../utils/AlertMessage";
+import { useRecoilState } from "recoil";
+import { currentUserState, isSigninState } from "../../lib/state/state";
 
 const SSubmitBtn = styled(Button)(({theme}) => ({
-    marginTop: theme.spacing(2),
-    flexGrow: 1,
-    textTransform: "none"
+  marginTop: theme.spacing(2),
+  flexGrow: 1,
+  textTransform: "none"
 }));
-
 const SHeader = styled(CardHeader)(({theme}) => ({
-    marginTop: theme.spacing(2),
-    flexGrow: 1,
-    textTransform: "none"
+  marginTop: theme.spacing(2),
+  flexGrow: 1,
+  textTransform: "none"
 }));
-
 const SCard = styled(Card)(({theme}) => ({
-    padding: theme.spacing(2),
-    maxWidth: 400
+  padding: theme.spacing(2),
+  maxWidth: 400
 }));
 
 // サインアップ用ページ
 export const SignUp = () => {
   const navigation = useNavigate()
-
-  const { setIsSignedIn, setCurrentUser } = useContext(AuthContext)
+  const setCurrentUser = useRecoilState(currentUserState)
+  const setIsSignIn = useRecoilState(isSigninState)
 
   const [name, setName] = useState("")
+  const [userName, setUserName] = useState("")
+  const [phone, setPhone] = useState("")
+  const [birthdate, setBirthdate] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [passwordConfirmation, setPasswordConfirmation] = useState("")
@@ -41,14 +43,17 @@ export const SignUp = () => {
 
     const params = {
       name: name,
+      user_name: userName,
       email: email,
       password: password,
-      passwordConfirmation: passwordConfirmation
+      passwordConfirmation: passwordConfirmation,
+      phone: phone,
+      birthdate: birthdate
     }
 
     try {
       const res = await signUp(params)
-      console.log(res)
+      console.log(params)
 
       if (res.status === 200) {
         // アカウント作成と同時にログインさせてしまう
@@ -57,7 +62,7 @@ export const SignUp = () => {
         Cookies.set("_client", res.headers["client"])
         Cookies.set("_uid", res.headers["uid"])
 
-        setIsSignedIn(true)
+        setIsSignIn(true)
         setCurrentUser(res.data.data)
 
         navigation("/")
@@ -91,6 +96,15 @@ export const SignUp = () => {
               variant="outlined"
               required
               fullWidth
+              label="UserName"
+              value={userName}
+              margin="dense"
+              onChange={event => setUserName(event.target.value)}
+            />
+            <TextField
+              variant="outlined"
+              required
+              fullWidth
               label="Email"
               value={email}
               margin="dense"
@@ -118,13 +132,31 @@ export const SignUp = () => {
               autoComplete="current-password"
               onChange={event => setPasswordConfirmation(event.target.value)}
             />
+            <TextField
+              variant="outlined"
+              required
+              fullWidth
+              label="PhoneNumber"
+              value={phone}
+              margin="dense"
+              onChange={event => setPhone(event.target.value)}
+            />
+            <TextField
+              variant="outlined"
+              required
+              fullWidth
+              label="BirthDay"
+              value={birthdate}
+              margin="dense"
+              onChange={event => setBirthdate(event.target.value)}
+            />
             <SSubmitBtn
               type="submit"
               variant="contained"
               size="large"
               fullWidth
               color="inherit"
-              disabled={!name || !email || !password || !passwordConfirmation ? true : false}
+              disabled={!name || !email || !userName || !phone || !birthdate || !password || !passwordConfirmation ? true : false}
               onClick={handleSubmit}
             >
               Submit

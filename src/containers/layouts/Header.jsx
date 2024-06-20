@@ -1,5 +1,4 @@
 import Cookies from "js-cookie"
-import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 // mui
@@ -11,10 +10,13 @@ import {HeaderTitle as STitle} from "../../components/typograpy/HeaderTitle";
 
 // api
 import { signOut } from "../../lib/api/auth";
-import { AuthContext } from "../../App";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { isSigninState, loadingState } from "../../lib/state/state";
 
 export const Header = () => {
-  const {loading, isSignIn, setIsSignIn } = useContext(AuthContext);
+  const loading = useRecoilValue(loadingState);
+  const [isSignIn, setIsSignIn] = useRecoilState(isSigninState);
+
   const navigation = useNavigate()
 
   const handleSignOut = async () => {

@@ -3,17 +3,18 @@ import Cookies from "js-cookie"
 
 // サインアップ（新規アカウント作成）
 export const signUp = (params) => {
-  return client.post("auth", params)
+  console.log(params)
+  return client.post("http://localhost:3000/api/v1/auth", params)
 }
 
 // サインイン（ログイン）
 export const signIn = (params)  => {
-  return client.post("auth/sign_in", params)
+  return client.post("http://localhost:3000/api/v1/auth/sign_in", params)
 }
 
 // サインアウト（ログアウト）
 export const signOut = () => {
-  return client.delete("auth/sign_out", { headers: {
+  return client.delete("http://localhost:3000/api/v1/auth/sign_out", { headers: {
     "access-token": Cookies.get("_access_token"),
     "client": Cookies.get("_client"),
     "uid": Cookies.get("_uid")

@@ -1,9 +1,10 @@
-import { useContext } from "react";
-
-import { AuthContext } from "../../App";
+import { useRecoilValue } from "recoil";
+import { currentUserState, isSigninState } from "../../lib/state/state";
 
 export const Home = () => {
-  const {isSignIn, currentUser } = useContext(AuthContext);
+  const isSignIn = useRecoilValue(isSigninState)
+  const currentUser = useRecoilValue(currentUserState)
+
   return (
     <>
       {

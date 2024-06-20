@@ -1,40 +1,36 @@
 import Cookies from "js-cookie"
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled, Card, CardHeader, Link, Button, CardContent, TextField, Typography, Box } from "@mui/material";
 
-import { AuthContext } from "../../App";
 import { signIn } from "../../lib/api/auth";
 import {AlertMessage} from "../utils/AlertMessage";
+import { currentUserState, isSigninState } from "../../lib/state/state";
+import { useRecoilState } from "recoil";
 
 const SCard = styled(Card)(({theme}) => ({
   padding: theme.spacing(2),
-  maxWidth: 400
+  maxWidth: 400,
 }));
-
 const SHeader = styled(CardHeader)(() => ({
-  textAlign: "center"
+  textAlign: "center",
 }));
-
 const SSubmitBtn = styled(Button)(({theme}) => ({
   marginTop: theme.spacing(2),
   flexGrow: 1,
-  textTransform: "none"
-
+  textTransform: "none",
 }));
-
 const SBox = styled(Box)(() => ({
-  marginTop: "2rem"
+  marginTop: "2rem",
 }));
-
 const SLink = styled(Link)(() => ({
-  textDecoration: "none"
+  textDecoration: "none",
 }));
 
 export const SignIn = () => {
   const navigation = useNavigate()
-
-  const { setIsSignIn, setCurrentUser } = useContext(AuthContext)
+  const setCurrentUser = useRecoilState(currentUserState)
+  const setIsSignIn = useRecoilState(isSigninState)
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -98,7 +94,8 @@ export const SignIn = () => {
               size="large"
               fullWidth
               color="inherit"
-              disabled={!email || !password ? true : false} // 空欄があった場合はボタンを押せないように
+              // 空欄があった場合はボタンを押せないように
+              disabled={!email || !password ? true : false}
               onClick={handleSubmit}
             >
               Submit

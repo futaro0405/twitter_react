@@ -5,8 +5,9 @@ import Cookies from "js-cookie"
 import { Button, Card, CardContent, CardHeader, TextField, styled } from "@mui/material"
 import { signUp } from "../../lib/api/auth";
 import {AlertMessage} from "../utils/AlertMessage";
-import { useRecoilState } from "recoil";
-import { currentUserState, isSigninState } from "../../lib/state/state";
+import { useSetRecoilState } from "recoil";
+import { currentUserState, flashState, isSigninState } from "../../lib/state/state";
+import { url_signin } from "../../lib/urls";
 
 const SSubmitBtn = styled(Button)(({theme}) => ({
   marginTop: theme.spacing(2),
@@ -26,8 +27,9 @@ const SCard = styled(Card)(({theme}) => ({
 // サインアップ用ページ
 export const SignUp = () => {
   const navigation = useNavigate()
-  const setCurrentUser = useRecoilState(currentUserState)
-  const setIsSignIn = useRecoilState(isSigninState)
+  const setCurrentUser = useSetRecoilState(currentUserState)
+  const setIsSignIn = useSetRecoilState(isSigninState)
+  const setFlash = useSetRecoilState(flashState)
 
   const [name, setName] = useState("")
   const [userName, setUserName] = useState("")
@@ -36,7 +38,6 @@ export const SignUp = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [passwordConfirmation, setPasswordConfirmation] = useState("")
-  const [alertMessageOpen, setAlertMessageOpen] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -48,7 +49,8 @@ export const SignUp = () => {
       password: password,
       passwordConfirmation: passwordConfirmation,
       phone: phone,
-      birthdate: birthdate
+      birthdate: birthdate,
+      // confirm_success_url: url_signin
     }
 
     try {
@@ -67,13 +69,25 @@ export const SignUp = () => {
 
         navigation("/")
 
-        console.log("Signed in successfully!")
+        setFlash({
+          isOpen: true,
+          severity: "success",
+          message: "Signed in successfully!",
+        })
       } else {
-        setAlertMessageOpen(true)
+        setFlash({
+          isOpen: true,
+          severity: "error",
+          message: res.data.errors.full_messages.join("\r\n"),
+        })
       }
     } catch (err) {
-      console.log(err)
-      setAlertMessageOpen(true)
+      console.log("err", err);
+      setFlash({
+        isOpen: true,
+        severity: "error",
+        message: err.data.errors.full_messages.join("\r\n"),
+      })
     }
   }
 
@@ -164,12 +178,7 @@ export const SignUp = () => {
           </CardContent>
         </SCard>
       </form>
-      <AlertMessage
-        open={alertMessageOpen}
-        setOpen={setAlertMessageOpen}
-        severity={"error"}
-        message={"Invalid emai or password"}
-      />
+      <AlertMessage />
     </>
   )
 }

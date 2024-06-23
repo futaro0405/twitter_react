@@ -1,6 +1,8 @@
 import { forwardRef } from "react";
 import { Snackbar } from "@mui/material";
 import MuiAlert from '@mui/material/Alert'
+import { useRecoilState } from "recoil";
+import { flashState } from "../../lib/state/state";
 
 const Alert = forwardRef(function Alert(
   props,
@@ -10,25 +12,25 @@ const Alert = forwardRef(function Alert(
 })
 
 // アラートメッセージ（何かアクションを行なった際の案内用に使い回す）
-export const AlertMessage = (props) => {
-  const { open, setOpen, severity, message } = props;
+export const AlertMessage = () => {
+  const [flash, setFlash] = useRecoilState(flashState)
   const handleClose = (e, reason) => {
     if (reason === "clickaway") return
-    setOpen(false)
+    setFlash({...flash, isOpen: false})
   }
 
   return (
     <Snackbar
-      open={open}
+      open={flash.isOpen}
       autoHideDuration={6000}
       anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       onClose={handleClose}
     >
       <Alert
         onClose={handleClose}
-        severity={severity}
+        severity={flash.severity}
       >
-        {message}
+        {flash.message}
       </Alert>
     </Snackbar>
   )

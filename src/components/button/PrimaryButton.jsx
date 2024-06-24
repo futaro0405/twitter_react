@@ -6,18 +6,18 @@ const SButton = styled(Button)(({theme}) => ({
   textTransform: "none"
 }));
 
-export const SubmitButton = (props) => {
-  const {disabled, handleEvent} = props;
+export const PrimaryButton = (props) => {
+  const {type, disabled, handleEvent} = props;
 
   return (
     <SButton
-      type="submit"
+      type={type}
+      disabled={disabled}
+      onClick={handleEvent}
       variant="contained"
       size="large"
       fullWidth
       color="inherit"
-      disabled={disabled}
-      onClick={handleEvent}
     >
       Submit
     </SButton>

@@ -1,16 +1,20 @@
+import {TextField as MUITextField} from "@mui/material"
+
 export const TextField = (props) => {
-  const { lavel, type, state, setState } = props;
+  const { name, type, label, value, handleChenge } = props;
 
   return (
-    <TextField
-      variant="outlined"
+    <MUITextField
+      name={name}
+      type={type}
+      label={label}
+      value={value}
+      onChange={handleChenge}
       required
       fullWidth
-      margin="dense"
-      type={type}
-      label={lavel}
-      value={state}
-      onChange={event => setState(event.target.value)}
+      variant="outlined"
+      margin="normal"
+      InputLabelProps={{ shrink: true }}
     />
   );
 }

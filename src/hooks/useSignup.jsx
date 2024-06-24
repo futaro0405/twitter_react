@@ -1,3 +1,7 @@
+export const isBlank = (user) => {
+  return Object.keys(user).some((key) => !user[key]);
+}
+
 export const initialUser = {
   name: "",
   userName: "",

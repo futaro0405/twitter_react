@@ -10,7 +10,7 @@ import { currentUserState, flashState, isSigninState } from "../../lib/state/sta
 import {AlertMessage} from "../utils/AlertMessage";
 import { Card } from "../../components/card/Card";
 import { TextField } from "../../components/textfield/TextField";
-import { initialUser, signupLists } from "../../hooks/useSignup";
+import { initialUser, isBlank, signupLists } from "../../hooks/useSignup";
 import { PrimaryButton } from "../../components/button/PrimaryButton";
 
 export const SignUp = () => {
@@ -18,7 +18,6 @@ export const SignUp = () => {
 
   const onChangeUser = (event) => {
     const { name, value } = event.target;
-    console.log([name]);
     setUser((prevUser) => ({ ...prevUser, [name]: value }));
   };
 
@@ -96,7 +95,7 @@ export const SignUp = () => {
 
           <PrimaryButton
             type="submit"
-            disabled={!name || !email || !userName || !phone || !birthdate || !password || !passwordConfirmation ? true : false}
+            disabled={isBlank(user) ? true : false}
             onClick={handleSubmit}
           >
 

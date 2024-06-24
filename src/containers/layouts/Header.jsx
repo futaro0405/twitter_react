@@ -41,8 +41,6 @@ export const Header = () => {
   }
 
   const AuthButtons = () => {
-    // 認証完了後はサインアウト用のボタンを表示
-    // 未認証時は認証用のボタンを表示
     if (!loading) {
       if (isSignIn) {
         return (

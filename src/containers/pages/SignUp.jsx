@@ -1,28 +1,17 @@
+import Cookies from "js-cookie"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import Cookies from "js-cookie"
-
-import { Button, Card, CardContent, CardHeader, TextField, styled } from "@mui/material"
-import { signUp } from "../../lib/api/auth";
-import {AlertMessage} from "../utils/AlertMessage";
 import { useSetRecoilState } from "recoil";
-import { currentUserState, flashState, isSigninState } from "../../lib/state/state";
-import { url_signin } from "../../lib/urls";
 
-const SSubmitBtn = styled(Button)(({theme}) => ({
-  marginTop: theme.spacing(2),
-  flexGrow: 1,
-  textTransform: "none"
-}));
-const SHeader = styled(CardHeader)(({theme}) => ({
-  marginTop: theme.spacing(2),
-  flexGrow: 1,
-  textTransform: "none"
-}));
-const SCard = styled(Card)(({theme}) => ({
-  padding: theme.spacing(2),
-  maxWidth: 400
-}));
+import { signUp } from "../../lib/api/auth";
+import { url_signin } from "../../lib/urls";
+import { currentUserState, flashState, isSigninState } from "../../lib/state/state";
+
+import {AlertMessage} from "../utils/AlertMessage";
+import { Card } from "../../components/card/Card";
+import { DateField } from "../../components/textfield/DateField";
+import { TextField } from "../../components/textfield/TextField";
+import { SubmitButton } from "../../components/button/PrimaryButton";
 
 // サインアップ用ページ
 export const SignUp = () => {
@@ -33,11 +22,56 @@ export const SignUp = () => {
 
   const [name, setName] = useState("")
   const [userName, setUserName] = useState("")
-  const [phone, setPhone] = useState("")
-  const [birthdate, setBirthdate] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [passwordConfirmation, setPasswordConfirmation] = useState("")
+  const [phone, setPhone] = useState("")
+  const [birthdate, setBirthdate] = useState("")
+
+  const formList = [
+    {
+      label: "Name",
+      type: "text",
+      state: name,
+      setState: setName,
+    },
+    {
+      label: "userName",
+      type: "text",
+      state: userName,
+      setState: setUserName,
+    },
+    {
+      label: "Email",
+      type: "text",
+      state: email,
+      setState: setEmail,
+    },
+    {
+      label: "Password",
+      type: "password",
+      state: password,
+      setState: setPassword,
+    },
+    {
+      label: "PasswordConfirmation",
+      type: "password",
+      state: passwordConfirmation,
+      setState: setPasswordConfirmation,
+    },
+    {
+      label: "PhoneNumber",
+      type: "text",
+      state: phone,
+      setState: setPhone,
+    },
+    {
+      label: "BirthDay",
+      type: "date",
+      state: birthdate,
+      setState: setBirthdate,
+    },
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -50,7 +84,7 @@ export const SignUp = () => {
       passwordConfirmation: passwordConfirmation,
       phone: phone,
       birthdate: birthdate,
-      // confirm_success_url: url_signin
+      confirm_success_url: url_signin
     }
 
     try {
@@ -94,90 +128,39 @@ export const SignUp = () => {
   return (
     <>
       <form noValidate autoComplete="off">
-        <SCard>
-          <SHeader title="Sign Up" />
-          <CardContent>
-            <TextField
-              variant="outlined"
-              required
-              fullWidth
-              label="Name"
-              value={name}
-              margin="dense"
-              onChange={event => setName(event.target.value)}
-            />
-            <TextField
-              variant="outlined"
-              required
-              fullWidth
-              label="UserName"
-              value={userName}
-              margin="dense"
-              onChange={event => setUserName(event.target.value)}
-            />
-            <TextField
-              variant="outlined"
-              required
-              fullWidth
-              label="Email"
-              value={email}
-              margin="dense"
-              onChange={event => setEmail(event.target.value)}
-            />
-            <TextField
-              variant="outlined"
-              required
-              fullWidth
-              label="Password"
-              type="password"
-              value={password}
-              margin="dense"
-              autoComplete="current-password"
-              onChange={event => setPassword(event.target.value)}
-            />
-            <TextField
-              variant="outlined"
-              required
-              fullWidth
-              label="Password Confirmation"
-              type="password"
-              value={passwordConfirmation}
-              margin="dense"
-              autoComplete="current-password"
-              onChange={event => setPasswordConfirmation(event.target.value)}
-            />
-            <TextField
-              variant="outlined"
-              required
-              fullWidth
-              label="PhoneNumber"
-              value={phone}
-              margin="dense"
-              onChange={event => setPhone(event.target.value)}
-            />
-            <TextField
-              variant="outlined"
-              required
-              fullWidth
-              label="BirthDay"
-              value={birthdate}
-              margin="dense"
-              onChange={event => setBirthdate(event.target.value)}
-            />
-            <SSubmitBtn
-              type="submit"
-              variant="contained"
-              size="large"
-              fullWidth
-              color="inherit"
-              disabled={!name || !email || !userName || !phone || !birthdate || !password || !passwordConfirmation ? true : false}
-              onClick={handleSubmit}
-            >
-              Submit
-            </SSubmitBtn>
-          </CardContent>
-        </SCard>
+        <Card title={"Sign Up"}>
+          { formList.map(arr => {
+            if (arr.type === "text" || arr.type === "password") {
+              return (
+                <TextField
+                  key={arr.label}
+                  type={arr.type}
+                  lavel={arr.label}
+                  state={arr.state}
+                  setState={arr.setState}
+                />
+              )
+            } else if(arr.type === "date") {
+              return (
+                <DateField
+                  key={arr.label}
+                  lavel={arr.label}
+                  state={arr.state}
+                  setState={arr.setState}
+                />
+              )
+            }
+          })}
+
+          <SubmitButton
+            disabled={!name || !email || !userName || !phone || !birthdate || !password || !passwordConfirmation ? true : false}
+            handleEvent={handleSubmit}
+          >
+            Submit
+          </SubmitButton>
+        </Card>
       </form>
+
       <AlertMessage />
     </>
   )

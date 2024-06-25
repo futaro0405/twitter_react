@@ -1,25 +1,21 @@
 import Cookies from "js-cookie"
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { styled, Card, CardHeader, Link, Button, CardContent, TextField, Typography, Box } from "@mui/material";
+import { useSetRecoilState } from "recoil";
+
+import { styled, Link, Box } from "@mui/material";
 
 import { signIn } from "../../lib/api/auth";
+import { currentUserState, flashState, isSigninState } from "../../lib/state/state";
 import {AlertMessage} from "../utils/AlertMessage";
-import { currentUserState, isSigninState } from "../../lib/state/state";
-import { useRecoilState } from "recoil";
 
-const SCard = styled(Card)(({theme}) => ({
-  padding: theme.spacing(2),
-  maxWidth: 400,
-}));
-const SHeader = styled(CardHeader)(() => ({
-  textAlign: "center",
-}));
-const SSubmitBtn = styled(Button)(({theme}) => ({
-  marginTop: theme.spacing(2),
-  flexGrow: 1,
-  textTransform: "none",
-}));
+import { Card } from "../../components/card/Card";
+import { PrimaryButton } from "../../components/button/PrimaryButton";
+import { TextField } from "../../components/textfield/TextField";
+
+import { initialUser, isBlank, signinLists } from "../../hooks/useSignin";
+import { Typography } from "../../components/typograpy/Typoraghy";
+
 const SBox = styled(Box)(() => ({
   marginTop: "2rem",
 }));
@@ -29,16 +25,25 @@ const SLink = styled(Link)(() => ({
 
 export const SignIn = () => {
   const navigation = useNavigate()
-  const setCurrentUser = useRecoilState(currentUserState)
-  const setIsSignIn = useRecoilState(isSigninState)
+  const setCurrentUser = useSetRecoilState(currentUserState)
+  const setIsSignIn = useSetRecoilState(isSigninState)
+  const setFlash = useSetRecoilState(flashState)
 
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [alertMessageOpen, setAlertMessageOpen] = useState(false)
+  const [user, setUser] = useState(initialUser)
+
+  const onChangeUser = () => {
+    const { name, value } = event.target;
+    setUser((prevUser) => ({ ...prevUser, [name]: value }));
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const params = { email, password }
+
+    const params = {
+      email: user.email,
+      password: user.password,
+    }
+
     try {
       const res = await signIn(params)
       console.log(res)
@@ -50,70 +55,66 @@ export const SignIn = () => {
 
         setIsSignIn(true)
         setCurrentUser(res.data.data)
+
         navigation("/")
-        console.log("Signed in successfully!")
+
+        setFlash({
+          isOpen: true,
+          severity: "success",
+          message: "Signed in successfully!",
+        })
       } else {
-        setAlertMessageOpen(true)
+        setFlash({
+          isOpen: true,
+          severity: "error",
+          message: res.data.errors.full_messages.join("\r\n"),
+        })
       }
     } catch (err) {
-      console.log(err)
-      setAlertMessageOpen(true)
+      console.log("err", err);
+      setFlash({
+        isOpen: true,
+        severity: "error",
+        message: err.data.errors.full_messages.join("\r\n"),
+      })
     }
   }
 
   return (
     <>
       <form noValidate autoComplete="off">
-        <SCard>
-          <SHeader title="Sign In" />
-          <CardContent>
-            <TextField
-              variant="outlined"
-              required
-              fullWidth
-              label="Email"
-              value={email}
-              margin="dense"
-              onChange={event => setEmail(event.target.value)}
-            />
-            <TextField
-              variant="outlined"
-              required
-              fullWidth
-              label="Password"
-              type="password"
-              placeholder="At least 6 characters"
-              value={password}
-              margin="dense"
-              autoComplete="current-password"
-              onChange={event => setPassword(event.target.value)}
-            />
-            <SSubmitBtn
-              type="submit"
-              variant="contained"
-              size="large"
-              fullWidth
-              color="inherit"
-              // 空欄があった場合はボタンを押せないように
-              disabled={!email || !password ? true : false}
-              onClick={handleSubmit}
-            >
-              Submit
-            </SSubmitBtn>
-            <SBox textAlign="center">
-              <Typography variant="body2">Don`t have an account?
-                <SLink to="/signup">Sign Up now!</SLink>
-              </Typography>
-            </SBox>
-          </CardContent>
-        </SCard>
+        <Card title="Sign In">
+          {
+            signinLists.map((list) => (
+              <TextField
+                key={list.name}
+                name={list.name}
+                type={list.type}
+                label={list.label}
+                value={user[list.name]}
+                handleChenge={(e) => onChangeUser(e)}
+              />
+            ))
+          }
+
+          <PrimaryButton
+            type={"submit"}
+            disabled={isBlank(user) ? true : false}
+            handleEvent={handleSubmit}
+          >
+            Submit
+          </PrimaryButton>
+
+          <SBox textAlign="center">
+            <Typography variant="body2">
+              Don`t have an account?
+              <SLink to="/signup">Sign Up now!</SLink>
+            </Typography>
+          </SBox>
+        </Card>
       </form>
-      <AlertMessage // エラーが発生した場合はアラートを表示
-        open={alertMessageOpen}
-        setOpen={setAlertMessageOpen}
-        severity={"error"}
-        message={"Invalid emai or password"}
-      />
+
+      <AlertMessage />
     </>
   )
 }

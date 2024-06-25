@@ -42,7 +42,7 @@ export const SignUp = () => {
 
     try {
       const res = await signUp(params)
-      console.log(params)
+      console.log(res)
 
       if (res.status === 200) {
         Cookies.set("_access_token", res.headers["access-token"])

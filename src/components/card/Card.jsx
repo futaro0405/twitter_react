@@ -1,8 +1,14 @@
-import { CardContent, CardHeader, Card as MuiCard, styled } from "@mui/material";
+import {
+  CardContent as MuiCardContent,
+  CardHeader as MuiCardHeader,
+  Card as MuiCard,
+  styled
+} from "@mui/material";
 
-const SHeader = styled(CardHeader)(({theme}) => ({
+const SHeader = styled(MuiCardHeader)(({theme}) => ({
   marginTop: theme.spacing(2),
   flexGrow: 1,
+  textAlign: "center",
   textTransform: "none"
 }));
 const SCard = styled(MuiCard)(({theme}) => ({
@@ -17,9 +23,9 @@ export const Card = (props) => {
   return (
     <SCard>
       <SHeader title={title} />
-      <CardContent>
+      <MuiCardContent>
         {children}
-      </CardContent>
+      </MuiCardContent>
     </SCard>
   );
 }

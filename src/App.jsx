@@ -1,40 +1,23 @@
 import './App.css'
-import { useState } from 'react'
-import axios from 'axios';
+import { RecoilRoot } from "recoil";
+import { Router } from './routes/Router';
+import { createTheme, CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
 
 function App() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSignUp = async () => {
-    try {
-      const response = await axios.post('http://localhost:3000/api/v1/auth', {
-        email: email,
-        password: password
-      });
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
+  const isDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
+  const theme = createTheme({
+    palette: {
+      mode: isDarkMode ? 'dark': 'light'
     }
-  };
-
+  })
 
   return (
-    <div>
-      <input
-        type="text"
-        placeholder="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={handleSignUp}>Sign Up</button>
-    </div>
+    <RecoilRoot>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router />
+      </ThemeProvider>
+    </RecoilRoot>
   );
 }
 
